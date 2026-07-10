@@ -1,6 +1,6 @@
 {
   "name": "bancontact-pro",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unofficial Node.js SDK for the Bancontact Pro (Payconiq) Merchant Payment API v3 — payments and webhook signature verification.",
   "keywords": [
     "bancontact",

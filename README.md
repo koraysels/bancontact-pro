@@ -37,17 +37,20 @@ npm install bancontact-pro
 ## Getting an API key
 
 1. **Get a Bancontact Pro merchant account.** Apply via [bancontactpro.com](https://www.bancontactpro.com) or your Bancontact contact. A registered business is required (Belgian merchant); onboarding includes KYC.
-2. **Open the merchant portal** and create a **payment profile** for the Integrated (server-to-server) product.
-3. **Generate the API key** — a Bearer token tied to that profile. There are separate **preprod** and **prod** environments; start in preprod.
-4. If you'll verify webhooks, note your callback setup and the JWKS host (see [Verifying webhooks](#verifying-webhooks)).
-5. Store the key as an environment variable and pass it to the client:
+2. In the merchant portal, open **Stores** and create a store.
+3. In that store, create a **Display** token (the Integrated "Display" product).
+4. Copy the **API key** it generates — that's your Bearer key. Pass it to the client as `apiKey`.
+
+The key from the portal is a **live** key, so use `environment: "prod"`:
 
 ```ts
 const bc = new BancontactPro({
   apiKey: process.env.BANCONTACT_API_KEY!,
-  environment: "preprod", // switch to "prod" when you go live
+  environment: "prod",
 });
 ```
+
+The SDK defaults to `"preprod"` purely as a safety net — you don't pick an environment in the portal. `preprod` is a separate Bancontact sandbox (different credentials), not a toggle on your live key.
 
 Portal labels can change — see the official [Bancontact Pro docs](https://docs.bancontactpro.com) or contact `devsupport@bancontact.com`.
 
@@ -112,11 +115,17 @@ Final states: `SUCCEEDED`, `AUTHORIZATION_FAILED`, `FAILED`, `CANCELLED`, `EXPIR
 Bancontact signs each callback with a detached JWS in the `signature` header. Pass the **raw** request body (not a re-serialized object) so the signature matches:
 
 ```ts
-// Example: an Express handler. Use a raw body parser for this route.
-app.post("/api/bancontact-webhook", express.raw({ type: "*/*" }), async (req, res) => {
+import express, { type Request, type Response } from "express";
+import { BancontactPro } from "bancontact-pro";
+
+const app = express();
+const bc = new BancontactPro({ apiKey: process.env.BANCONTACT_API_KEY!, environment: "prod" });
+
+// Use a raw body parser on this route so the signature matches the exact bytes.
+app.post("/api/bancontact-webhook", express.raw({ type: "*/*" }), async (req: Request, res: Response) => {
   try {
     const event = await bc.callbacks.verify({
-      rawBody: req.body.toString("utf8"),
+      rawBody: (req.body as Buffer).toString("utf8"),
       signature: req.header("signature") ?? "",
     });
     // event is the verified JSON payload, e.g. { paymentId, status, reference, ... }
