@@ -12,7 +12,7 @@ Unofficial Node.js SDK for the **Bancontact Pro** (Payconiq) [Merchant Payment A
 - **Safe defaults** — talks to `preprod` unless you explicitly ask for `prod`.
 - **Dual build** — works with both `import` (ESM) and `require` (CommonJS). No runtime dependencies.
 
-Requires **Node 18+** (uses the global `fetch`).
+Requires **Node 18+** (uses the global `fetch`) and a **Bancontact Pro (Payconiq) merchant account** — the API only works with credentials issued from that account (see [Getting an API key](#getting-an-api-key)).
 
 ## Why Bancontact Pro?
 
@@ -36,7 +36,7 @@ npm install bancontact-pro
 
 ## Getting an API key
 
-1. **Get a Bancontact Pro merchant account.** Apply via [bancontactpro.com](https://www.bancontactpro.com) or your Bancontact contact. A registered business is required (Belgian merchant); onboarding includes KYC.
+1. **Get a Bancontact Pro (Payconiq) merchant account.** Apply via [bancontactpro.com](https://www.bancontactpro.com) or your Bancontact contact. A registered business is required (Belgian merchant); onboarding includes KYC. This account is mandatory — there is no self-serve/test key without it.
 2. In the merchant portal, open **Stores** and create a store.
 3. In that store, create a **Display** token (the Integrated "Display" product).
 4. Copy the **API key** it generates — that's your Bearer key. Pass it to the client as `apiKey`.
