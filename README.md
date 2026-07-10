@@ -93,6 +93,16 @@ Didn't persist the `paymentId`? Look it up by your own reference:
 const p = await bc.payments.findByReference("order-123");
 ```
 
+### Don't rely on the payer returning
+
+The `returnUrl` redirect is best-effort. A payer can complete the payment and never come back (they close the banking app), so "the browser returned" is not a reliable confirmation. If you only update your records on return, a genuinely paid order can stay `pending` forever. Confirm server-side with one or more of:
+
+- **Poll on return**: on your return page, call `payments.get(paymentId)` until `isSuccessful(status)` or `isFinal(status)`.
+- **Webhook**: pass `callbackUrl` to `payments.create`; Bancontact POSTs status changes to it regardless of whether the payer returns. Verify each call with `callbacks.verify` (see [Verifying webhooks](#verifying-webhooks)).
+- **Reconcile sweep**: on a schedule, re-check your still-pending orders with `payments.get` / `payments.findByReference` and update them. A cheap backstop that also catches anything a webhook misses.
+
+The goal: your order record converges to the real outcome even if the payer never returns.
+
 ## Payment status model
 
 The API reports ten states. Two helpers cover the common questions:
