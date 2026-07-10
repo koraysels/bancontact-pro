@@ -1,0 +1,57 @@
+{
+  "name": "bancontact-pro",
+  "version": "0.1.0",
+  "description": "Unofficial Node.js SDK for the Bancontact Pro (Payconiq) Merchant Payment API v3 — payments and webhook signature verification.",
+  "keywords": [
+    "bancontact",
+    "bancontact-pro",
+    "payconiq",
+    "payments",
+    "belgium",
+    "sdk",
+    "webhook"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+  },
+  "license": "MIT",
+  "author": "Koray Sels",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koraysels/bancontact-pro.git"
+  },
+  "homepage": "https://github.com/koraysels/bancontact-pro#readme",
+  "bugs": {
+    "url": "https://github.com/koraysels/bancontact-pro/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
