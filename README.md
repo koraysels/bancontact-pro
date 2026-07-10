@@ -14,11 +14,42 @@ Unofficial Node.js SDK for the **Bancontact Pro** (Payconiq) [Merchant Payment A
 
 Requires **Node 18+** (uses the global `fetch`).
 
+## Why Bancontact Pro?
+
+[Bancontact](https://www.bancontact.com) is **Belgium's most-used payment method** — the default way people pay online and in shops. If you sell to Belgian customers, you need to accept it.
+
+Bancontact Pro (the Payconiq-operated merchant API) bills a **low flat fee per transaction** rather than a percentage. On the Integrated product that fee is on the order of **~€0.06** per payment (contract-dependent) — far below what a general PSP charges to route Bancontact:
+
+| Provider | Bancontact fee per transaction (indicative, 2026) |
+| --- | --- |
+| **Bancontact Pro (direct)** | **~€0.06 flat** (depends on your contract/volume) |
+| [Stripe](https://stripe.com/pricing/local-payment-methods) | €0.35 flat (+2% on currency conversion) |
+| [Mollie](https://www.mollie.com/payments/bancontact) | €0.39 flat |
+
+On a €10 sale that's roughly **0.6% vs 3.5–3.9%** — about 6× cheaper, and the gap widens on smaller tickets. Figures are indicative and current as of 2026; always confirm live pricing with each provider (Bancontact Pro pricing is contract-dependent).
+
 ## Install
 
 ```sh
 npm install bancontact-pro
 ```
+
+## Getting an API key
+
+1. **Get a Bancontact Pro merchant account.** Apply via [bancontactpro.com](https://www.bancontactpro.com) or your Bancontact contact. A registered business is required (Belgian merchant); onboarding includes KYC.
+2. **Open the merchant portal** and create a **payment profile** for the Integrated (server-to-server) product.
+3. **Generate the API key** — a Bearer token tied to that profile. There are separate **preprod** and **prod** environments; start in preprod.
+4. If you'll verify webhooks, note your callback setup and the JWKS host (see [Verifying webhooks](#verifying-webhooks)).
+5. Store the key as an environment variable and pass it to the client:
+
+```ts
+const bc = new BancontactPro({
+  apiKey: process.env.BANCONTACT_API_KEY!,
+  environment: "preprod", // switch to "prod" when you go live
+});
+```
+
+Portal labels can change — see the official [Bancontact Pro docs](https://docs.bancontactpro.com) or contact `devsupport@bancontact.com`.
 
 ## Quick start
 
